@@ -1,0 +1,92 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "privatus-analytics",
+  "version": "1.0.0",
+  "description": "Read and manage your Privatus Analytics sites, stats, goals and testimonials.",
+  "homepage": "https://privatusanalytics.com",
+  "author": {
+    "name": "Privatus Analytics",
+    "email": "hello@privatusanalytics.com",
+    "url": "https://privatusanalytics.com"
+  },
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Privatus Analytics",
+        "shortDescription": "Privacy-first web analytics",
+        "longDescription": "Privatus Analytics is web analytics for your own websites. This plugin lets you read and manage your Privatus Analytics account from ChatGPT: ask how your sites are doing in plain words and get the numbers back.\n\nWhat it does:\n- Website traffic: visitors, pageviews, bounce rate and visit duration for any period, compared with the period before, broken down by page, source, campaign, country or device.\n- Conversions: goal completions and conversion rates, funnels and the paths visitors take before they convert.\n- Live and insights: who is on your site right now, and the biggest changes since the last period.\n- Site health: Web Vitals, SEO site audits and uptime checks.\n- Testimonials: read, approve, reject, tag and organize the testimonials your customers send.\n- With full access it can also create and edit goals, funnels, segments, chart notes, alerts and email reports.\n\nWho it is for: website owners, marketers, founders and agencies who already use Privatus Analytics and want answers about their traffic without opening a dashboard.\n\nLimitations:\n- You need a Privatus Analytics account with at least one site that has the tracking script installed.\n- It only sees the workspace you connect, and never does more than your own role allows. You choose read-only or full access when you connect.\n- Deleting data and changes to members, access or security are never done from ChatGPT: the tool gives you a link to the page in Privatus Analytics where you do it yourself.\n- Privatus Analytics is cookieless and stores no IP addresses or visitor identities, so it cannot tell you who a visitor was.",
+        "developerName": "Privatus Analytics",
+        "category": "Data & Analytics",
+        "capabilities": [
+          "Read",
+          "Write"
+        ],
+        "websiteURL": "https://privatusanalytics.com",
+        "supportURL": "https://privatusanalytics.com/contact",
+        "privacyPolicyURL": "https://privatusanalytics.com/legal/privacy",
+        "termsOfServiceURL": "https://privatusanalytics.com/legal/terms",
+        "defaultPrompt": [
+          "How did my website do last week compared with the week before?",
+          "Which pages and sources brought the most visitors this month?",
+          "How many visitors are on my site right now?"
+        ],
+        "logo": "./assets/logo.png",
+        "composerIcon": "./assets/logo.png"
+      },
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "List sites",
+              "prompt": "Which websites do I track in Privatus Analytics?",
+              "tools_triggered": "sites_list",
+              "expected_behavior": "Lists the sites of the connected workspace with their domains."
+            },
+            {
+              "description": "Traffic summary",
+              "prompt": "How many visitors and pageviews did my busiest site get in the last 30 days?",
+              "tools_triggered": "stats_overview",
+              "expected_behavior": "Gives visitors, visits, pageviews, bounce rate and visit duration for the last 30 days, with the change from the period before."
+            },
+            {
+              "description": "Top sources",
+              "prompt": "What were the top 5 referrers to my site last week?",
+              "tools_triggered": "stats_breakdown",
+              "expected_behavior": "Lists the top 5 referrers with visitors and their share of the total."
+            },
+            {
+              "description": "Goal conversions",
+              "prompt": "List my goals and their conversion rates this month.",
+              "tools_triggered": "goals_list",
+              "expected_behavior": "Lists each goal with completions and conversion rate for the month."
+            },
+            {
+              "description": "Create a goal",
+              "prompt": "Create a goal called Signup for visits to the page /welcome.",
+              "tools_triggered": "goals_create",
+              "expected_behavior": "After confirmation, creates a pageview goal for /welcome and returns its id and name."
+            }
+          ],
+          "negative": [
+            {
+              "description": "Delete a site",
+              "prompt": "Delete my site and all of its data."
+            },
+            {
+              "description": "Visitor identity",
+              "prompt": "Tell me the IP address and name of the person who visited my features page."
+            },
+            {
+              "description": "Unrelated request",
+              "prompt": "Book me a flight to Lisbon next Friday."
+            }
+          ]
+        },
+        "demo_recording_url": "https://mega.nz/file/cCJ3QRBB#OeRGaVWRsnLBxCynhxfaR0js-RVTOeJ__RzoiEaF8mM"
+      },
+      "publication": {
+        "release_notes": "First release: traffic stats, breakdowns, live visitors, insights, goals, notes and testimonial moderation for your Privatus Analytics workspace."
+      }
+    }
+  }
+}
