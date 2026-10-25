@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Check plugin.json and mcp.json
+        run: |
+          node -e '
+            const fs = require("fs");
+            const fail = (m) => { console.error(m); process.exit(1); };
+            const plugin = JSON.parse(fs.readFileSync("plugin.json", "utf8"));
+            const mcp = JSON.parse(fs.readFileSync("mcp.json", "utf8"));
+            for (const k of ["name", "version", "description"]) if (!plugin[k]) fail("plugin.json: missing " + k);
+            if (!/^\d+\.\d+\.\d+$/.test(plugin.version)) fail("plugin.json: version is not x.y.z");
+            const ui = plugin.extensions?.["com.openai"]?.interface;
+            if (!ui) fail("plugin.json: missing extensions.com.openai.interface");
+            for (const k of ["displayName", "shortDescription", "longDescription", "developerName", "logo"]) if (!ui[k]) fail("interface: missing " + k);
+            for (const k of ["logo", "composerIcon"]) if (ui[k] && !fs.existsSync(ui[k])) fail("interface." + k + ": " + ui[k] + " not found");
+            for (const k of ["websiteURL", "supportURL", "privacyPolicyURL", "termsOfServiceURL"]) if (ui[k] && !ui[k].startsWith("https://")) fail("interface." + k + " is not https");
+            const servers = Object.entries(mcp.mcpServers || {});
+            if (servers.length === 0) fail("mcp.json: no mcpServers");
+            for (const [name, s] of servers) if (!String(s.url).startsWith("https://")) fail("mcp.json: " + name + " url is not https");
+            console.log("plugin " + plugin.name + " " + plugin.version + ", " + servers.length + " MCP server(s)");
+          '
